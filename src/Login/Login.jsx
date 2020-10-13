@@ -146,7 +146,7 @@ export default function Login(props) {
 
     return (
         <div>
-            <button onClick={handleClick}>Login with MetaMask</button>
+            <button className="login-btn" onClick={handleClick}>Login with MetaMask</button>
         </div>
     )
 }

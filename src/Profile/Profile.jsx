@@ -8,22 +8,17 @@ const REACT_APP_BACKEND_URL = "http://localhost:8000/api"
 
 export default function Profile(props) {
     const [loading, setLoading] = useState(false)
-    const [user, setUser] = useState(undefined)
+    const [user, setUser] = useState({})
     const [username, setUsername] = useState("")
     const {
         auth: { accessToken },
     } = props;
     const {
-        payload: { publicAddress },
+        payload: { publicAddress, id },
     } = jwtDecode(accessToken);
 
     useEffect(() => {
-        const {
-            auth: { accessToken },
-        } = props;
-        const {
-            payload: { id },
-        } = jwtDecode(accessToken);
+
 
         fetch(`${REACT_APP_BACKEND_URL}/users/${id}`, {
             headers: {
@@ -31,7 +26,7 @@ export default function Profile(props) {
             },
         })
             .then((response) => response.json())
-            .then((user) => setUser({ user }))
+            .then((user) => setUser(user))
             .catch(window.alert);
     }, [true])
 
@@ -40,10 +35,7 @@ export default function Profile(props) {
     };
 
     const handleSubmit = () => {
-        const {
-            auth: { accessToken },
-        } = this.props;
-        const { user, username } = this.state;
+
 
         setLoading(true)
 
@@ -63,10 +55,13 @@ export default function Profile(props) {
             method: 'PATCH',
         })
             .then((response) => response.json())
-            .then((user) => this.setState({ loading: false, user }))
+            .then((user) => {
+                setLoading(false)
+                setUser(user)
+            })
             .catch((err) => {
                 window.alert(err);
-                this.setState({ loading: false });
+                setLoading(false)
             });
     };
 
@@ -75,10 +70,10 @@ export default function Profile(props) {
     return (
         <div className="Profile">
             <p>
-                Logged in as <Blockies seed={publicAddress} />
+                Logged in as &nbsp; <Blockies seed={publicAddress} />
             </p>
             <div>
-                My username is {username ? <pre>{username}</pre> : 'not set.'} My
+                My username is {user.username ? <pre>{user.username}</pre> : 'not set.'} My
                 publicAddress is <pre>{publicAddress}</pre>
             </div>
             <div>
